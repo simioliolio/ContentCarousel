@@ -9,6 +9,8 @@
 #import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
+#import "CarouselVideoView.h"
+
 @interface ContentCarouselTests : XCTestCase
 
 @end
@@ -25,16 +27,25 @@
     [super tearDown];
 }
 
+/*
 - (void)testExample {
     // This is an example of a functional test case.
     XCTAssert(YES, @"Pass");
 }
+ */
 
+-(void)testVideoLoad {
+    NSString *filePath = @"/Users/simioliolio/Desktop/a_gp.mov";
+    CarouselVideoView *videoView = [[CarouselVideoView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) andPath:filePath];
+}
+
+/*
 - (void)testPerformanceExample {
     // This is an example of a performance test case.
     [self measureBlock:^{
         // Put the code you want to measure the time of here.
     }];
 }
+ */
 
 @end

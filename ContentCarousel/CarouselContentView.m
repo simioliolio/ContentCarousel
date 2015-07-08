@@ -20,6 +20,7 @@
 
 
 -(void)tellDelegateContentHasFinished {
+//    NSLog(@"tellDelegateContentHasFinished");
     if (_delegate) {
         [_delegate contentDidFinish:self];
     }

@@ -11,6 +11,7 @@
 @import AVKit;
 
 @implementation CarouselVideoView {
+    AVURLAsset *asset;
     AVPlayer *player;
     AVPlayerView *playerView; // ??
     AVPlayerItem *playerItem;
@@ -23,7 +24,7 @@
     if (self) {
         
         NSLog(@"initialise video view with path: %@", inVideoPath);
-        url = [NSURL URLWithString:inVideoPath];
+        url = [[NSURL alloc] initFileURLWithPath:inVideoPath];
         
         
     }
@@ -33,42 +34,59 @@
 -(void)startContent {
 //    [self addSubview:playerView];
 //    [player play];
-    NSLog(@"start content in video player");
-    AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:url options:nil];
-    NSString *tracksKey = @"tracks";
-    static const NSString *ItemStatusContext;
     
+    asset = [[AVURLAsset alloc] initWithURL:url options:nil];
+    NSString *tracksKey = @"tracks";
+    
+//    NSLog(@"about to start loading tracks for %@", url);
     [asset loadValuesAsynchronouslyForKeys:@[tracksKey] completionHandler:
      ^{
          
-          NSError *error;
-         AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+         dispatch_async(dispatch_get_main_queue(), ^{
+             NSError *error;
+             AVKeyValueStatus status = [asset statusOfValueForKey:tracksKey error:&error];
+             
+             if (status == AVKeyValueStatusLoaded) {
+                 playerItem = [AVPlayerItem playerItemWithAsset:asset];
+                 // ensure that this is done before the playerItem is associated with the player
+                 //             [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionInitial context:&ItemStatusContext];
+                 [[NSNotificationCenter defaultCenter] addObserver:self
+                                                          selector:@selector(playerItemDidReachEnd:)
+                                                              name:AVPlayerItemDidPlayToEndTimeNotification
+                                                            object:playerItem];
+                 player = [AVPlayer playerWithPlayerItem:playerItem];
+                 playerView = [[AVPlayerView alloc] initWithFrame:self.frame];
+                 [playerView setControlsStyle:AVPlayerViewControlsStyleNone];
+                 [playerView setPlayer:player];
+                 dispatch_async(dispatch_get_main_queue(), ^{
+                     [self addSubview:playerView];
+                 });
+                 
+                 [player play];
+                 NSLog(@"play called");
+             }
+             else {
+                 // You should deal with the error appropriately.
+                 NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
+                 [self tellDelegateContentHasFinished];
+             }
+         });
+//         NSLog(@"completion handler called!");
+//         static const NSString *ItemStatusContext;
          
-         if (status == AVKeyValueStatusLoaded) {
-             playerItem = [AVPlayerItem playerItemWithAsset:asset];
-             // ensure that this is done before the playerItem is associated with the player
-             [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionInitial context:&ItemStatusContext];
-             [[NSNotificationCenter defaultCenter] addObserver:self
-                                                      selector:@selector(playerItemDidReachEnd:)
-                                                          name:AVPlayerItemDidPlayToEndTimeNotification
-                                                        object:playerItem];
-             player = [AVPlayer playerWithPlayerItem:playerItem];
-             [playerView setPlayer:player];
-             [player play];
-         }
-         else {
-             // You should deal with the error appropriately.
-             NSLog(@"The asset's tracks were not loaded:\n%@", [error localizedDescription]);
-//             [self tellDelegateContentHasFinished];
-         }
-          
+         
+         
+         
+         
+         
      }];
-     
+
     
 }
 
 -(void)playerItemDidReachEnd:(NSNotification*)notification {
-    NSLog(@"reached the end");
+//    NSLog(@"reached the end");
+    [self tellDelegateContentHasFinished];
 }
 
 

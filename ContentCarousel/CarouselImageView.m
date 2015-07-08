@@ -39,8 +39,15 @@
 }
 
 -(void)startContent {
-    [self addSubview:imageView];
-    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:waitTime target:self selector:@selector(tellDelegateContentHasFinished) userInfo:nil repeats:NO];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self addSubview:imageView];
+    });
+    
+    dispatch_time_t time = dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC);
+    dispatch_after(time, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0) , ^{
+        [self tellDelegateContentHasFinished];
+    });
+//    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:waitTime target:self selector:@selector(tellDelegateContentHasFinished) userInfo:nil repeats:NO];
 }
 
 @end

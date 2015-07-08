@@ -37,7 +37,11 @@
     }
     
 //    NSLog(@"frameRect = %@", NSStringFromRect(self.window.frame));
-    [self setupCarouselAfterEnsuringFullScreen];
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        [self setupCarouselAfterEnsuringFullScreen];        
+    });
+    
     
 }
 

@@ -34,10 +34,13 @@
 }
  */
 
+
+/*
 -(void)testVideoLoad {
     NSString *filePath = @"/Users/simioliolio/Desktop/a_gp.mov";
     CarouselVideoView *videoView = [[CarouselVideoView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) andPath:filePath];
 }
+ */
 
 /*
 - (void)testPerformanceExample {

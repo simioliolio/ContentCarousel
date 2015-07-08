@@ -91,7 +91,7 @@ static void cCallback(
 
 -(void)setDelegate:(id <FolderWatcherDelegate>)inDelegate {
     delegate = inDelegate;
-    [self syncFilenamesWithFolder];
+//    [self syncFilenamesWithFolder];
 }
 
 -(void)notifyEvents:(size_t)inNumberOfEvents paths:(void*)inPaths withFlags:(const FSEventStreamEventFlags*)inFlags andEventIDs:(const FSEventStreamEventId*)eventIDs {

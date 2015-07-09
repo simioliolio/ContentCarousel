@@ -34,7 +34,7 @@ static void cCallback(
 -(instancetype)initWithPath:(NSString*)watchPath {
     self = [super init];
     if (self) {
-        NSLog(@"watchPath chosen in FolderWatcher: %@", watchPath);
+//        NSLog(@"watchPath chosen in FolderWatcher: %@", watchPath);
         
         _watchFolderPath = watchPath;
         fileManager = [NSFileManager defaultManager];
@@ -73,12 +73,22 @@ static void cCallback(
 
 -(NSError*)syncFilenamesWithFolder {  // called when contents of watch folder has changed. array 'sortedFilenamesInWatchFolder' is updated
     NSError *error = nil;
-    filenamesInWatchFolder = nil;
-    filenamesInWatchFolder = [fileManager contentsOfDirectoryAtPath:self.watchFolderPath error:&error];
+    NSArray *allFileNames = [fileManager contentsOfDirectoryAtPath:self.watchFolderPath error:&error];
     if (error) {
-        NSLog(@"error reading watch folder");
+        NSLog(@"ERROR: error reading watch folder (%@). please modify plist in resources folder", self.watchFolderPath);
         return error;
     }
+    NSMutableArray *filenamesWithoutAPreceedingDot = [[NSMutableArray alloc] init];
+    for (NSString* filename in allFileNames) {
+        NSString *firstCharacter = [filename substringToIndex:1];
+        if (![firstCharacter isEqualToString:@"."]) {
+            [filenamesWithoutAPreceedingDot addObject:filename];
+        }
+    }
+    
+    filenamesInWatchFolder = nil;
+    filenamesInWatchFolder = [NSArray arrayWithArray:filenamesWithoutAPreceedingDot];
+    
     
     // tell delegate
     if (delegate) {

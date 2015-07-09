@@ -10,6 +10,14 @@
 
 @implementation CarouselContentView
 
+-(instancetype)init {
+    self = [super init];
+    if (self) {
+        _isReadyToView = NO;
+    }
+    return self;
+}
+
 /*
 - (void)drawRect:(NSRect)dirtyRect {
     [super drawRect:dirtyRect];

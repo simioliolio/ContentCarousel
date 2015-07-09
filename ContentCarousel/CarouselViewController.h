@@ -12,6 +12,6 @@
 
 @interface CarouselViewController : NSViewController <FolderWatcherDelegate, CarouselContentDelegate>
 
--(instancetype)initWithWatchPath:(NSString*)inPath andFullScreenFrame:(CGRect)inFrame;
+-(instancetype)initWithFullScreenFrame:(CGRect)inFrame;
 
 @end

@@ -16,6 +16,7 @@
 		91049CC01B4A908100858548 /* CarouselViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 91049CBE1B4A908100858548 /* CarouselViewController.m */; };
 		91049CC31B4A984200858548 /* FolderWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 91049CC21B4A984200858548 /* FolderWatcher.m */; };
 		91049CC41B4A984200858548 /* FolderWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 91049CC21B4A984200858548 /* FolderWatcher.m */; };
+		91DB9F7D1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91DB9F7C1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist */; };
 		91F768E51B4BFCA0009AC11E /* CarouselImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F768E41B4BFCA0009AC11E /* CarouselImageView.m */; };
 		91F768E81B4C007C009AC11E /* CarouselContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F768E71B4C007C009AC11E /* CarouselContentView.m */; };
 		91F768EB1B4C17D1009AC11E /* CarouselVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F768EA1B4C17D1009AC11E /* CarouselVideoView.m */; };
@@ -46,6 +47,7 @@
 		91049CBE1B4A908100858548 /* CarouselViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarouselViewController.m; sourceTree = "<group>"; };
 		91049CC11B4A984200858548 /* FolderWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderWatcher.h; sourceTree = "<group>"; };
 		91049CC21B4A984200858548 /* FolderWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderWatcher.m; sourceTree = "<group>"; };
+		91DB9F7C1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ContentCarouselSettings.plist; sourceTree = "<group>"; };
 		91F768E31B4BFCA0009AC11E /* CarouselImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarouselImageView.h; sourceTree = "<group>"; };
 		91F768E41B4BFCA0009AC11E /* CarouselImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarouselImageView.m; sourceTree = "<group>"; };
 		91F768E61B4C007C009AC11E /* CarouselContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarouselContentView.h; sourceTree = "<group>"; };
@@ -112,6 +114,7 @@
 				91049C8D1B4A839400858548 /* Images.xcassets */,
 				91049C8F1B4A839400858548 /* MainMenu.xib */,
 				91049C861B4A839400858548 /* Supporting Files */,
+				91DB9F7C1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist */,
 			);
 			path = ContentCarousel;
 			sourceTree = "<group>";
@@ -222,6 +225,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				91DB9F7D1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist in Resources */,
 				91049C8E1B4A839400858548 /* Images.xcassets in Resources */,
 				91049C911B4A839400858548 /* MainMenu.xib in Resources */,
 			);
@@ -370,6 +374,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ContentCarousel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
@@ -382,6 +387,7 @@
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = ContentCarousel/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;

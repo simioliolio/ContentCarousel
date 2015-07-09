@@ -35,6 +35,19 @@
 //    [self addSubview:playerView];
 //    [player play];
     
+    /*
+    playerItem = [[AVPlayerItem alloc] initWithURL:url];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(playerItemDidReachEnd:)
+                                                 name:AVPlayerItemDidPlayToEndTimeNotification
+                                               object:playerItem];
+    AVPlayer *videoPlayer = [[AVPlayer alloc] initWithPlayerItem:playerItem];
+    playerView = [[AVPlayerView alloc] initWithFrame:self.frame];
+    playerView.videoGravity = AVLayerVideoGravityResize;
+    playerView.player = videoPlayer;
+    [playerView.player play];
+    */
+    
     asset = [[AVURLAsset alloc] initWithURL:url options:nil];
     NSString *tracksKey = @"tracks";
     
@@ -51,16 +64,14 @@
                  // ensure that this is done before the playerItem is associated with the player
                  //             [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionInitial context:&ItemStatusContext];
                  [[NSNotificationCenter defaultCenter] addObserver:self
-                                                          selector:@selector(playerItemDidReachEnd:)
+                                                          selector:@selector(tellDelegateContentHasFinished)
                                                               name:AVPlayerItemDidPlayToEndTimeNotification
                                                             object:playerItem];
                  player = [AVPlayer playerWithPlayerItem:playerItem];
                  playerView = [[AVPlayerView alloc] initWithFrame:self.frame];
                  [playerView setControlsStyle:AVPlayerViewControlsStyleNone];
                  [playerView setPlayer:player];
-                 dispatch_async(dispatch_get_main_queue(), ^{
-                     [self addSubview:playerView];
-                 });
+                 [self addSubview:playerView];
                  
                  [player play];
                  NSLog(@"play called");
@@ -84,10 +95,12 @@
     
 }
 
+/*
 -(void)playerItemDidReachEnd:(NSNotification*)notification {
 //    NSLog(@"reached the end");
     [self tellDelegateContentHasFinished];
 }
+ */
 
 
 - (void)drawRect:(NSRect)dirtyRect {

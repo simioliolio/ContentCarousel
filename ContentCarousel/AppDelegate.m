@@ -52,10 +52,9 @@
         return;
     }
     
-    // will use desktop as watch folder for now. could load from a config file at this point.
-    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES );
-    NSString* desktopPath = [paths objectAtIndex:0];
-    self.viewController = [[CarouselViewController alloc] initWithWatchPath:desktopPath andFullScreenFrame:self.window.frame];
+//    NSArray* paths = NSSearchPathForDirectoriesInDomains(NSDesktopDirectory, NSUserDomainMask, YES );
+//    NSString* desktopPath = [paths objectAtIndex:0];
+    self.viewController = [[CarouselViewController alloc] initWithFullScreenFrame:self.window.frame];
     [self.window setContentView:self.viewController.view];
     
 }

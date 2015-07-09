@@ -18,6 +18,8 @@
 @interface CarouselContentView : NSView
 
 @property (readwrite) id <CarouselContentDelegate> delegate;
+@property (readonly) NSString *filename;
+@property (readonly) BOOL isReadyToView;
 
 -(void)tellDelegateContentHasFinished;
 

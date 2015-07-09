@@ -43,9 +43,12 @@
     BOOL isRunning;
     
     NSFileManager *fm;
+    
+    
+    CarouselContentView *contentView;
 }
 
--(instancetype)initWithWatchPath:(NSString*)inPath andFullScreenFrame:(CGRect)inFrame {
+-(instancetype)initWithFullScreenFrame:(CGRect)inFrame {
     self = [super init];
     if (self) {
         
@@ -53,10 +56,39 @@
         isRunning = YES;
         fm = [NSFileManager defaultManager];
         
-        // XML?
-        waitTimeForImages = 3;
+        NSString *fallbackWatchFolderPath = @"/Users/Shared/ContentCarousel";
+        NSUInteger fallbackWaitTimeForImages = 10;
         
-        self.watchPath = inPath;
+        NSString *pathOfPlist = [[NSBundle mainBundle] pathForResource:@"ContentCarouselSettings" ofType:@"plist"];
+        NSLog(@"path of plist = %@", pathOfPlist);
+        NSLog(@"expected keys: 'imageWaitTime' (Number). 'watchFolderPath' (String)");
+        if ([fm fileExistsAtPath:pathOfPlist]) {
+            NSLog(@"plist found");
+            NSDictionary *plistDictionary = [NSDictionary dictionaryWithContentsOfFile:pathOfPlist];
+//            NSLog(@"plistDictionary: %@", plistDictionary);
+            NSString *watchPath = [plistDictionary valueForKey:@"watchFolderPath"];
+            if (watchPath) {
+                self.watchPath = watchPath;
+            } else {
+                NSLog(@"value in plist for 'watchFolderPath' not found. setting as '/Users/Shared/ContentCarousel'");
+                self.watchPath = fallbackWatchFolderPath;
+            }
+            NSNumber *number = [plistDictionary valueForKey:@"imageWaitTime"];
+            if (number) {
+                waitTimeForImages = [number integerValue];
+            } else {
+                NSLog(@"value in plist for 'imageWaitTime' not found. setting as 10");
+                waitTimeForImages = fallbackWaitTimeForImages;
+            }
+        } else {
+            NSLog(@"no plist found. using 10 second wait time and fallback watch folder path '/Users/Shared/ContentCarousel'");
+            waitTimeForImages = fallbackWaitTimeForImages;
+            self.watchPath = fallbackWatchFolderPath;
+        }
+        NSLog(@"watchFolderPath = %@", self.watchPath);
+        NSLog(@"imageWaitTime = %li", waitTimeForImages);
+        
+        // ! use auto-layout, not an explicit frame !
         proposedFrame = inFrame;
         
         folderWatcher = [[FolderWatcher alloc] initWithPath:self.watchPath];
@@ -106,11 +138,19 @@
         if ([filenamesForContent count] == 0) {
             NSLog(@"nothing to present");
             isRunning = NO;
+            // remove current subviews
+            dispatch_async(dispatch_get_main_queue(), ^{
+                // remove current subviews
+                NSArray *subviews = [self.view subviews];
+                for (NSView *view in subviews) {
+                    [view removeFromSuperview];
+                }
+            });
             return;
         }
         NSUInteger numberOfLoops = 0;
         BOOL contentSuccessfullyLoaded = NO;
-        CarouselContentView *contentView; // assigned pointer of content view subclass
+        CarouselContentView *newContentView; // assigned pointer of content view subclass
         while (!contentSuccessfullyLoaded) {
             if ([filenamesForContent count] > selectedStringIndex) {
                 NSString *relativeFilenameString = [filenamesForContent objectAtIndex:selectedStringIndex];
@@ -125,7 +165,7 @@
                         // image
                         CarouselImageView *imageContentView = [[CarouselImageView alloc] initWithFrame:self.view.frame waitTime:waitTimeForImages andPath:absoluteFilenameString];
                         if (imageContentView) {
-                            contentView = imageContentView; //
+                            newContentView = imageContentView; //
                             contentSuccessfullyLoaded = YES; //
                         } else {
                             [self incrementSelectedStringIndex];
@@ -135,7 +175,7 @@
                         // video
                         CarouselVideoView *videoContentView = [[CarouselVideoView alloc] initWithFrame:self.view.frame andPath:absoluteFilenameString];
                         if (videoContentView) {
-                            contentView = videoContentView; //
+                            newContentView = videoContentView; //
                             contentSuccessfullyLoaded = YES; //
                         } else {
                             [self incrementSelectedStringIndex];
@@ -167,17 +207,26 @@
             }
         }
         // begin content
-        [contentView setDelegate:self];
-        [contentView startContent];
+        [newContentView setDelegate:self];
+        [newContentView startContent];
+        
         dispatch_async(dispatch_get_main_queue(), ^{
             // remove current subviews
             NSArray *subviews = [self.view subviews];
             for (NSView *view in subviews) {
                 [view removeFromSuperview];
             }
+            
+            contentView = nil;
+            contentView = newContentView;
+//            [contentView setDelegate:self];
+//            [contentView startContent];
+            
             // add new view
             [self.view addSubview:contentView];
         });
+        
+        
     }
 }
 
@@ -195,53 +244,65 @@
         filenamesForContent = nil;
         filenamesForContent = [[NSArray alloc] initWithArray:inArray];
         selectedStringIndex = 0;
-        isRunning = NO;
+//        isRunning = NO;
+        // remove current subviews
         return;
     }
-    if (selectedStringIndex >= [filenamesForContent count]) {
-        NSLog(@"cannot sync filenames if current selection is greater than number of items in filenamesForContent");
-        return;
-    }
-    // must keep place in carousel. if currently displayed filename is still in the folder, use string comparison in new array to find old position.
-    // if currently displayed filename has been removed, add it before sorting, sort, find index, then remove
-    NSString *stringAtSelectedIndex = [[filenamesForContent objectAtIndex:selectedStringIndex] copy]; // find this later to resume position
-    // refresh array
-    filenamesForContent = nil;
-    filenamesForContent = [[NSMutableArray alloc] initWithArray:inArray];
-    // find if filename is still in array (not by address, as string addresses are all different)
-    NSString *foundFilename = nil;
-    for (NSString *filename in filenamesForContent) {
-        if ([filename isEqualToString:stringAtSelectedIndex]) {
-            foundFilename = filename;
-            break;
-        }
-    }
-    NSUInteger updatedSelectedStringIndex;
-    if (foundFilename) {
-        // string wasn't removed, so will be easy to find the selection index again after sorting
-        NSArray *sortedArray = [self numericallyOrderArray:filenamesForContent];
+    if ([filenamesForContent count] == 0) {
+        // if own array is empty and inArray has just been populated, get filenames and sort
+        NSArray *sortedArray = [self numericallyOrderArray:inArray];
         filenamesForContent = nil;
-        filenamesForContent = [[NSMutableArray alloc] initWithArray:sortedArray copyItems:NO];
-        updatedSelectedStringIndex = [filenamesForContent indexOfObject:foundFilename];
+        filenamesForContent = [[NSArray alloc] initWithArray:sortedArray copyItems:NO];
+        selectedStringIndex = 0;
     } else {
-        NSMutableArray *mutableFilenameArray = [[NSMutableArray alloc] initWithArray:filenamesForContent copyItems:NO];
-        // string was removed. add old string before sorting, then find it, find the index, then remove it, and decrement index by 1!
-        [mutableFilenameArray addObject:stringAtSelectedIndex];
-        NSArray *sortedArray = [self numericallyOrderArray:mutableFilenameArray];
-        mutableFilenameArray = nil;
-        mutableFilenameArray = [[NSMutableArray alloc] initWithArray:sortedArray copyItems:NO];
-        NSUInteger indexOfAddedString = [mutableFilenameArray indexOfObject:stringAtSelectedIndex];
-        [mutableFilenameArray removeObject:stringAtSelectedIndex];
-        if (indexOfAddedString == 0) {
-            indexOfAddedString = [mutableFilenameArray count] - 1; // go to end
-            updatedSelectedStringIndex = indexOfAddedString;
-        } else {
-            updatedSelectedStringIndex = indexOfAddedString - 1;
+        NSLog(@"[inArray count] == %li", [inArray count]);
+        NSLog(@"selectedStringIndex == %li, [filenamesForContent count] == %li", selectedStringIndex, [filenamesForContent count]);
+        if (selectedStringIndex >= [filenamesForContent count]) {
+            NSLog(@"dev: cannot sync filenames if current selection is greater than number of items in filenamesForContent");
+            return;
         }
+        // must keep place in carousel. if currently displayed filename is still in the folder, use string comparison in new array to find old position.
+        // if currently displayed filename has been removed, add it before sorting, sort, find index, then remove
+        NSString *stringAtSelectedIndex = [[filenamesForContent objectAtIndex:selectedStringIndex] copy]; // find this later to resume position
+        // refresh array
         filenamesForContent = nil;
-        filenamesForContent = [[NSArray alloc] initWithArray:mutableFilenameArray copyItems:NO];
+        filenamesForContent = [[NSMutableArray alloc] initWithArray:inArray];
+        // find if filename is still in array (not by address, as string addresses are all different)
+        NSString *foundFilename = nil;
+        for (NSString *filename in filenamesForContent) {
+            if ([filename isEqualToString:stringAtSelectedIndex]) {
+                foundFilename = filename;
+                break;
+            }
+        }
+        NSUInteger updatedSelectedStringIndex;
+        if (foundFilename) {
+            // string wasn't removed, so will be easy to find the selection index again after sorting
+            NSArray *sortedArray = [self numericallyOrderArray:filenamesForContent];
+            filenamesForContent = nil;
+            filenamesForContent = [[NSMutableArray alloc] initWithArray:sortedArray copyItems:NO];
+            updatedSelectedStringIndex = [filenamesForContent indexOfObject:foundFilename];
+        } else {
+            NSMutableArray *mutableFilenameArray = [[NSMutableArray alloc] initWithArray:filenamesForContent copyItems:NO];
+            // string was removed. add old string before sorting, then find it, find the index, then remove it, and decrement index by 1!
+            [mutableFilenameArray addObject:stringAtSelectedIndex];
+            NSArray *sortedArray = [self numericallyOrderArray:mutableFilenameArray];
+            mutableFilenameArray = nil;
+            mutableFilenameArray = [[NSMutableArray alloc] initWithArray:sortedArray copyItems:NO];
+            NSUInteger indexOfAddedString = [mutableFilenameArray indexOfObject:stringAtSelectedIndex];
+            [mutableFilenameArray removeObject:stringAtSelectedIndex];
+            if (indexOfAddedString == 0) {
+                indexOfAddedString = [mutableFilenameArray count] - 1; // go to end
+                updatedSelectedStringIndex = indexOfAddedString;
+            } else {
+                updatedSelectedStringIndex = indexOfAddedString - 1;
+            }
+            filenamesForContent = nil;
+            filenamesForContent = [[NSArray alloc] initWithArray:mutableFilenameArray copyItems:NO];
+        }
+        selectedStringIndex = updatedSelectedStringIndex;
     }
-    selectedStringIndex = updatedSelectedStringIndex;
+    
     // if carousel is not runnning, kick it off with new filenames
     if (!isRunning) {
         isRunning = YES;
@@ -252,12 +313,13 @@
         
     }
     
-    NSLog(@"syncroniseWithFilenameArray; selectedStringIndex = %lu, filenamesForContent: \n%@", selectedStringIndex, filenamesForContent);
+    NSLog(@"syncroniseWithFilenameArray; selectedStringIndex = %lu, filenamesForContent: \n%@, isRunning = %i", selectedStringIndex, filenamesForContent, isRunning);
 }
 
 
 // delegate method
 -(void)filenamesUpdatedInFolderWatcher {
+    NSLog(@"delegate method called!");
     dispatch_async(presentationQueue, ^{
         [self syncroniseWithFilenameArray:folderWatcher.filenamesInWatchFolder];
     });

@@ -50,4 +50,8 @@
 //    NSTimer *timer = [NSTimer scheduledTimerWithTimeInterval:waitTime target:self selector:@selector(tellDelegateContentHasFinished) userInfo:nil repeats:NO];
 }
 
+-(void)stopContent {
+//    imageView = nil;
+}
+
 @end

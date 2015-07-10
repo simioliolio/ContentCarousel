@@ -217,6 +217,7 @@
                 [view removeFromSuperview];
             }
             
+            
             contentView = nil;
             contentView = newContentView;
 //            [contentView setDelegate:self];

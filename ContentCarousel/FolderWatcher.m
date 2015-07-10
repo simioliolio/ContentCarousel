@@ -39,7 +39,7 @@ static void cCallback(
         _watchFolderPath = watchPath;
         fileManager = [NSFileManager defaultManager];
         
-        // populate set with current filenames in folder
+        // populate array with current filenames in folder
         NSError *error = [self syncFilenamesWithFolder];
         if (error) {
             return nil;

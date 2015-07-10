@@ -64,7 +64,7 @@
                  // ensure that this is done before the playerItem is associated with the player
                  //             [playerItem addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionInitial context:&ItemStatusContext];
                  [[NSNotificationCenter defaultCenter] addObserver:self
-                                                          selector:@selector(tellDelegateContentHasFinished)
+                                                          selector:@selector(playerItemDidReachEnd:)
                                                               name:AVPlayerItemDidPlayToEndTimeNotification
                                                             object:playerItem];
                  player = [AVPlayer playerWithPlayerItem:playerItem];
@@ -95,12 +95,13 @@
     
 }
 
-/*
+
 -(void)playerItemDidReachEnd:(NSNotification*)notification {
-//    NSLog(@"reached the end");
+    NSLog(@"reached the end");
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self tellDelegateContentHasFinished];
 }
- */
+
 
 
 - (void)drawRect:(NSRect)dirtyRect {

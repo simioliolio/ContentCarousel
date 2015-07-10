@@ -23,9 +23,10 @@
 
 -(void)tellDelegateContentHasFinished;
 
-/* subclass this
+/* subclass these
  */
 -(void)startContent;
+-(void)stopContent;
 
 @end
 

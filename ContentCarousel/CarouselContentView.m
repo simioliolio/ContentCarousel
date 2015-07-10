@@ -38,5 +38,9 @@
     NSLog(@"startContent called in superclass");
 }
 
+-(void)stopContent {
+    NSLog(@"stopContent called in superclass");
+}
+
 
 @end

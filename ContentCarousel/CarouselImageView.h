@@ -15,8 +15,6 @@
  */
 -(instancetype)initWithFrame:(NSRect)frameRect waitTime:(NSUInteger)inWaitTime andPath:(NSString*)inImagePath;
 
--(void)startContent;
-
 @end
 
 

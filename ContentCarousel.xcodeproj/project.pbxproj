@@ -17,6 +17,7 @@
 		91049CC31B4A984200858548 /* FolderWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 91049CC21B4A984200858548 /* FolderWatcher.m */; };
 		91049CC41B4A984200858548 /* FolderWatcher.m in Sources */ = {isa = PBXBuildFile; fileRef = 91049CC21B4A984200858548 /* FolderWatcher.m */; };
 		91DB9F7D1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist in Resources */ = {isa = PBXBuildFile; fileRef = 91DB9F7C1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist */; };
+		91DB9F861B4EFD140026C6B1 /* CarouselContentRepository.m in Sources */ = {isa = PBXBuildFile; fileRef = 91DB9F851B4EFD140026C6B1 /* CarouselContentRepository.m */; };
 		91F768E51B4BFCA0009AC11E /* CarouselImageView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F768E41B4BFCA0009AC11E /* CarouselImageView.m */; };
 		91F768E81B4C007C009AC11E /* CarouselContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F768E71B4C007C009AC11E /* CarouselContentView.m */; };
 		91F768EB1B4C17D1009AC11E /* CarouselVideoView.m in Sources */ = {isa = PBXBuildFile; fileRef = 91F768EA1B4C17D1009AC11E /* CarouselVideoView.m */; };
@@ -48,6 +49,8 @@
 		91049CC11B4A984200858548 /* FolderWatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FolderWatcher.h; sourceTree = "<group>"; };
 		91049CC21B4A984200858548 /* FolderWatcher.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FolderWatcher.m; sourceTree = "<group>"; };
 		91DB9F7C1B4DDC9B0026C6B1 /* ContentCarouselSettings.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = ContentCarouselSettings.plist; sourceTree = "<group>"; };
+		91DB9F841B4EFD140026C6B1 /* CarouselContentRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarouselContentRepository.h; sourceTree = "<group>"; };
+		91DB9F851B4EFD140026C6B1 /* CarouselContentRepository.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarouselContentRepository.m; sourceTree = "<group>"; };
 		91F768E31B4BFCA0009AC11E /* CarouselImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarouselImageView.h; sourceTree = "<group>"; };
 		91F768E41B4BFCA0009AC11E /* CarouselImageView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CarouselImageView.m; sourceTree = "<group>"; };
 		91F768E61B4C007C009AC11E /* CarouselContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CarouselContentView.h; sourceTree = "<group>"; };
@@ -105,6 +108,8 @@
 				91049CBE1B4A908100858548 /* CarouselViewController.m */,
 				91049CC11B4A984200858548 /* FolderWatcher.h */,
 				91049CC21B4A984200858548 /* FolderWatcher.m */,
+				91DB9F841B4EFD140026C6B1 /* CarouselContentRepository.h */,
+				91DB9F851B4EFD140026C6B1 /* CarouselContentRepository.m */,
 				91F768E61B4C007C009AC11E /* CarouselContentView.h */,
 				91F768E71B4C007C009AC11E /* CarouselContentView.m */,
 				91F768E31B4BFCA0009AC11E /* CarouselImageView.h */,
@@ -252,6 +257,7 @@
 				91049C8C1B4A839400858548 /* main.m in Sources */,
 				91049C8A1B4A839400858548 /* AppDelegate.m in Sources */,
 				91F768EB1B4C17D1009AC11E /* CarouselVideoView.m in Sources */,
+				91DB9F861B4EFD140026C6B1 /* CarouselContentRepository.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
